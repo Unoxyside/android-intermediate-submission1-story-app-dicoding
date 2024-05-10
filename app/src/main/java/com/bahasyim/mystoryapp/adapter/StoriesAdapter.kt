@@ -12,7 +12,7 @@ import com.bahasyim.mystoryapp.data.api.ListStoryItem
 import com.bahasyim.mystoryapp.databinding.ItemStoryBinding
 import com.bahasyim.mystoryapp.view.storydetail.StoryDetailActivity
 import com.bumptech.glide.Glide
-
+//test
 class StoriesAdapter :ListAdapter<ListStoryItem, StoriesAdapter.MyViewHolder>(DIFFUTIL) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
