@@ -11,6 +11,7 @@ import com.bahasyim.mystoryapp.data.api.UploadStoryResponse
 import com.bahasyim.mystoryapp.data.preference.UserModel
 import com.bahasyim.mystoryapp.data.preference.UserPreference
 import com.bahasyim.mystoryapp.data.remote.ApiService
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -30,6 +31,10 @@ class Repository private constructor(
 
     private var _listStory = MutableLiveData<List<ListStoryItem>>()
     var listStory: MutableLiveData<List<ListStoryItem>> = _listStory
+
+    //status upload
+    private val _uploadStatus = MutableLiveData<Result<UploadStoryResponse>>()
+    val uploadStatus: LiveData<Result<UploadStoryResponse>> = _uploadStatus
 
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)
@@ -96,11 +101,16 @@ class Repository private constructor(
             ) {
                 if (response.isSuccessful){
                     _isLoading.value = false
+                    _uploadStatus.value = Result.success(response.body()!!)
+                } else {
+                    val errorResponse = Gson().fromJson(response.errorBody()?.string(), UploadStoryResponse::class.java)
+                    _uploadStatus.value = Result.failure(Exception(errorResponse.message))
                 }
             }
 
             override fun onFailure(call: Call<UploadStoryResponse>, t: Throwable) {
                 _isLoading.value = false
+                _uploadStatus.value = Result.failure(t)
                 Log.e("Repository", "error: ${t.message}" )
             }
 

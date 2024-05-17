@@ -31,6 +31,7 @@
             android:id="@+id/iv_signup_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="@string/signup_image"
             android:scaleType="centerCrop"
             android:src="@drawable/signup_image"/>
     </com.google.android.material.card.MaterialCardView>

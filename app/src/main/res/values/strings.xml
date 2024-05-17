@@ -3,7 +3,7 @@
     <string name="log_out">Log Out</string>
     <string name="story_post">Story Post</string>
     <string name="create_story">Create Story</string>
-    <string name="photo">photo</string>
+    <string name="photo">Image Preview</string>
     <string name="description">Description</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
@@ -24,4 +24,9 @@
     <string name="login_failed">Ensure your email and password correctly</string>
     <string name="invalid_content">Require to fill the image and description</string>
     <string name="login_successfully">Login successfully</string>
+    <string name="hero_image">Sign In Image</string>
+    <string name="signup_image">Signup Image</string>
+    <string name="upload_success">Upload Successfully</string>
+    <string name="upload_failed">Upload Failed</string>
+
 </resources>

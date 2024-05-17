@@ -95,12 +95,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun showLoading(state: Boolean) {
-     if (state){
-         binding.progressBarMain.visibility = View.VISIBLE
-     } else {
-         binding.progressBarMain.visibility = View.GONE
-     }
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBarMain.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun setStoryList(stories: List<ListStoryItem>?) {

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
@@ -13,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bahasyim.mystoryapp.R
-import com.bahasyim.mystoryapp.data.api.UploadStoryResponse
 import com.bahasyim.mystoryapp.databinding.ActivityCreateStoryBinding
 import com.bahasyim.mystoryapp.util.ViewUtil
 import com.bahasyim.mystoryapp.util.getImageUri
@@ -21,12 +21,10 @@ import com.bahasyim.mystoryapp.util.reduceImageFile
 import com.bahasyim.mystoryapp.util.uriToFile
 import com.bahasyim.mystoryapp.view.ViewModelFactory
 import com.bahasyim.mystoryapp.view.main.MainActivity
-import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.HttpException
 
 class CreateStory : AppCompatActivity() {
     private lateinit var binding: ActivityCreateStoryBinding
@@ -46,9 +44,11 @@ class CreateStory : AppCompatActivity() {
             insets
         }
         ViewUtil.fullScreenView(this)
-        binding.btnGallery.setOnClickListener{ startGallery()}
-        binding.btnCamera.setOnClickListener { startCamera()}
-        binding.buttonUpload.setOnClickListener { uploadContent() }
+        with(binding) {
+            btnGallery.setOnClickListener { startGallery() }
+            btnCamera.setOnClickListener { startCamera() }
+            buttonUpload.setOnClickListener { uploadContent() }
+        }
     }
 
     private fun startCamera() {
@@ -56,22 +56,22 @@ class CreateStory : AppCompatActivity() {
         launcherIntentCamera.launch(currentImageUri!!)
     }
 
-    private fun startGallery(){
+    private fun startGallery() {
         launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { isSuccess ->
-        if (isSuccess){
+        if (isSuccess) {
             showImage()
         }
     }
 
     private val launcherGallery = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
-    ){ uri: Uri? ->
-        if (uri != null){
+    ) { uri: Uri? ->
+        if (uri != null) {
             currentImageUri = uri
             showImage()
         } else {
@@ -86,28 +86,33 @@ class CreateStory : AppCompatActivity() {
         }
     }
 
-
-
     private fun uploadContent() {
         currentImageUri?.let { uri ->
             val description = binding.edAddDescription.text.toString()
             if (description.isNotEmpty()) {
+                showLoading(true)
                 val fileImage = uriToFile(uri, this).reduceImageFile()
                 Log.d("File Image", "image: ${fileImage.path}")
 
                 val requestBody = description.toRequestBody("text/plain".toMediaType())
                 val requestFileImage = fileImage.asRequestBody("image/jpeg".toMediaType())
                 val multipartBody = MultipartBody.Part.createFormData("photo", fileImage.name, requestFileImage)
-
-                try {
-                    viewModel.uploadContent(multipartBody, requestBody)
-                    backToMainActivity()
-                } catch (e: HttpException) {
-                    val errorResponse = Gson().fromJson(e.response()?.errorBody()?.string(), UploadStoryResponse::class.java)
-                    showToast(errorResponse.message.toString())
-                }
+                viewModel.uploadContent(multipartBody, requestBody)
+                observeViewModel()
             } else {
                 showToast(getString(R.string.invalid_content))
+            }
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.uploadStatus.observe(this) { result ->
+            showLoading(false)
+            result.onSuccess {
+                showToast(getString(R.string.upload_success))
+                backToMainActivity()
+            }.onFailure {
+                showToast(it.message ?: getString(R.string.upload_failed))
             }
         }
     }
@@ -121,5 +126,9 @@ class CreateStory : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBarStory.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }
