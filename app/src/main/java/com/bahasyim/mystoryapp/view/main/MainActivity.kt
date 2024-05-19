@@ -19,6 +19,7 @@ import com.bahasyim.mystoryapp.databinding.ActivityMainBinding
 import com.bahasyim.mystoryapp.util.ViewUtil
 import com.bahasyim.mystoryapp.view.ViewModelFactory
 import com.bahasyim.mystoryapp.view.createstory.CreateStory
+import com.bahasyim.mystoryapp.view.map.MapsActivity
 import com.bahasyim.mystoryapp.view.welcome.WelcomeActivity
 import kotlinx.coroutines.launch
 
@@ -57,6 +58,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.fabCreateStory.setOnClickListener {
             startActivity(Intent(this@MainActivity, CreateStory::class.java))
+        }
+
+        binding.actionMaps.setOnClickListener {
+            startActivity(Intent(this@MainActivity, MapsActivity::class.java))
         }
 
         setupRecyclerView()

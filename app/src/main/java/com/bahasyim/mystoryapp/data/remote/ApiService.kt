@@ -1,5 +1,6 @@
 package com.bahasyim.mystoryapp.data.remote
 
+import com.bahasyim.mystoryapp.data.api.ListStoryItem
 import com.bahasyim.mystoryapp.data.api.LoginResponse
 import com.bahasyim.mystoryapp.data.api.RegisterResponse
 import com.bahasyim.mystoryapp.data.api.StoryResponse
@@ -14,6 +15,7 @@ import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ApiService {
     //Sign Up

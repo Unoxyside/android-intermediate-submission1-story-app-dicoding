@@ -21,7 +21,8 @@ import retrofit2.Response
 
 class Repository private constructor(
     private val apiService: ApiService,
-    private val userPreference: UserPreference
+    private val userPreference: UserPreference,
+
 ){
     private var _loginResult = MutableLiveData<LoginResponse>()
     var loginResult: MutableLiveData<LoginResponse> = _loginResult
@@ -35,6 +36,7 @@ class Repository private constructor(
     //status upload
     private val _uploadStatus = MutableLiveData<Result<UploadStoryResponse>>()
     val uploadStatus: LiveData<Result<UploadStoryResponse>> = _uploadStatus
+
 
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)

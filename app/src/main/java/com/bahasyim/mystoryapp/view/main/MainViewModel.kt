@@ -22,4 +22,5 @@ class MainViewModel(private val repository: Repository): ViewModel() {
     suspend fun logOut(){
         repository.logOut()
     }
+
 }

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".view.main.MainActivity">
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_bar_main"
         android:layout_width="42dp"
         android:layout_height="42dp"
@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    </ProgressBar>
+    </com.google.android.material.progressindicator.CircularProgressIndicator>
 
     <TextView
         android:id="@+id/tv_title"
@@ -41,6 +41,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/tv_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_title" />
+
+    <Button
+        android:id="@+id/action_maps"
+        style="?attr/materialIconButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:contentDescription="@string/log_out"
+        app:icon="@drawable/ic_map"
+        app:layout_constraintBottom_toBottomOf="@+id/action_logout"
+        app:layout_constraintEnd_toStartOf="@+id/action_logout"
+        app:layout_constraintTop_toTopOf="@+id/action_logout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_story"
