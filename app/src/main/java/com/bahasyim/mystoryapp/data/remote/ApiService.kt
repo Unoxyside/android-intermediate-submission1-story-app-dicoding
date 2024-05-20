@@ -37,7 +37,10 @@ interface ApiService {
 
     //Stories List Data
     @GET("stories")
-    fun getStories(): Call<StoryResponse>
+    suspend fun getStories(
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): StoryResponse
 
     //Upload Story
     @Multipart
@@ -46,4 +49,5 @@ interface ApiService {
         @Part image: MultipartBody.Part,
         @Part("description") description: RequestBody,
     ): Call<UploadStoryResponse>
+
 }

@@ -1,6 +1,8 @@
 package com.bahasyim.mystoryapp.data.api
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
@@ -17,9 +19,11 @@ data class StoryResponse(
 )
 
 @Parcelize
+@Entity(tableName = "story_item")
 data class ListStoryItem(
+    @PrimaryKey
     @field:SerializedName("id")
-    val id: String? = null,
+    val id: String,
 
     @field:SerializedName("photoUrl")
     val photoUrl: String? = null,

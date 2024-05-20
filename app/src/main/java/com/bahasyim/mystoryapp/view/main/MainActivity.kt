@@ -10,11 +10,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bahasyim.mystoryapp.R
 import com.bahasyim.mystoryapp.adapter.StoriesAdapter
-import com.bahasyim.mystoryapp.data.api.ListStoryItem
 import com.bahasyim.mystoryapp.databinding.ActivityMainBinding
 import com.bahasyim.mystoryapp.util.ViewUtil
 import com.bahasyim.mystoryapp.view.ViewModelFactory
@@ -25,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
-    private val binding get() =_binding!!
+    private val binding get() = _binding!!
     private val viewModel by viewModels<MainViewModel> {
         ViewModelFactory.getInstance(this)
     }
@@ -64,21 +62,29 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity, MapsActivity::class.java))
         }
 
-        setupRecyclerView()
     }
 
     private fun getSession() {
+        val adapter = StoriesAdapter()
         viewModel.getSession().observe(this) { user ->
             if (!user.isLogin) {
                 navigateToWelcomeActivity()
             } else {
-                viewModel.isLoading.observe(this) { state ->
-                    showLoading(state)
+                lifecycleScope.launch {
+                    viewModel.story.observe(this@MainActivity){
+                        adapter.submitData(lifecycle, it)
+                    }
                 }
-                viewModel.getStories().observe(this) { stories ->
-                    setStoryList(stories)
+                binding.rvStory.adapter = adapter
+                viewModel.story.observe(this) {
+                    adapter.submitData(lifecycle, it)
+                    showLoading(false)
                 }
             }
+        }
+        binding.rvStory.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            this.adapter = adapter
         }
     }
 
@@ -90,25 +96,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun setupRecyclerView() {
-        binding.rvStory.layoutManager = LinearLayoutManager(this)
-        binding.rvStory.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
-            )
-        )
-    }
-
     private fun showLoading(isLoading: Boolean) {
         binding.progressBarMain.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun setStoryList(stories: List<ListStoryItem>?) {
-        val adapter = StoriesAdapter()
-        adapter.submitList(stories)
-        binding.rvStory.adapter = adapter
-    }
 
     override fun onDestroy() {
         super.onDestroy()

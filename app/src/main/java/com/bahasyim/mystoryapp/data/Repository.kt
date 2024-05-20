@@ -3,11 +3,17 @@ package com.bahasyim.mystoryapp.data
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
 import com.bahasyim.mystoryapp.data.api.ListStoryItem
 import com.bahasyim.mystoryapp.data.api.LoginResponse
 import com.bahasyim.mystoryapp.data.api.RegisterResponse
 import com.bahasyim.mystoryapp.data.api.StoryResponse
 import com.bahasyim.mystoryapp.data.api.UploadStoryResponse
+import com.bahasyim.mystoryapp.data.database.StoryDatabase
+import com.bahasyim.mystoryapp.data.paging.StoryPagingSource
 import com.bahasyim.mystoryapp.data.preference.UserModel
 import com.bahasyim.mystoryapp.data.preference.UserPreference
 import com.bahasyim.mystoryapp.data.remote.ApiService
@@ -22,6 +28,7 @@ import retrofit2.Response
 class Repository private constructor(
     private val apiService: ApiService,
     private val userPreference: UserPreference,
+    private val storyDatabase: StoryDatabase
 
 ){
     private var _loginResult = MutableLiveData<LoginResponse>()
@@ -37,6 +44,18 @@ class Repository private constructor(
     private val _uploadStatus = MutableLiveData<Result<UploadStoryResponse>>()
     val uploadStatus: LiveData<Result<UploadStoryResponse>> = _uploadStatus
 
+
+    //paging
+    fun getStory(): LiveData<PagingData<ListStoryItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5
+            ),
+            pagingSourceFactory = {
+                StoryPagingSource(apiService)
+            }
+        ).liveData
+    }
 
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)
@@ -63,27 +82,27 @@ class Repository private constructor(
         userPreference.saveSession(user)
     }
 
-    fun getStories(){
-        _isLoading.value = true
-        val client = apiService.getStories()
-        client.enqueue(object : Callback<StoryResponse> {
-            override fun onResponse(
-                call: Call<StoryResponse>,
-                response: Response<StoryResponse>
-            ) {
-                if (response.isSuccessful){
-                    _isLoading.value = false
-                    _listStory.value = response.body()?.listStory
-                }
-            }
-
-            override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
-                _isLoading.value = false
-                Log.e("Repository", "error: ${t.message}" )
-            }
-
-        })
-    }
+//    fun getStories(){
+//        _isLoading.value = true
+//        val client = apiService.getStories()
+//        client.enqueue(object : Callback<StoryResponse> {
+//            override fun onResponse(
+//                call: Call<StoryResponse>,
+//                response: Response<StoryResponse>
+//            ) {
+//                if (response.isSuccessful){
+//                    _isLoading.value = false
+//                    _listStory.value = response.body()?.listStory
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
+//                _isLoading.value = false
+//                Log.e("Repository", "error: ${t.message}" )
+//            }
+//
+//        })
+//    }
 
     fun getSession(): Flow<UserModel> {
         return userPreference.getSession()
@@ -130,9 +149,9 @@ class Repository private constructor(
             instance = null
         }
 
-        fun getInstance(apiService: ApiService, userPreference: UserPreference): Repository =
+        fun getInstance(apiService: ApiService, userPreference: UserPreference, database: StoryDatabase): Repository =
             instance ?: synchronized(this) {
-                instance ?: Repository(apiService, userPreference)
+                instance ?: Repository(apiService, userPreference, database)
             }.also { instance = it }
     }
 }
