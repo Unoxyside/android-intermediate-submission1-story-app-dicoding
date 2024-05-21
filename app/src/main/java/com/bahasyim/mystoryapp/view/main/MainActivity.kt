@@ -10,8 +10,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bahasyim.mystoryapp.R
+import com.bahasyim.mystoryapp.adapter.LoadingStoryAdapter
 import com.bahasyim.mystoryapp.adapter.StoriesAdapter
 import com.bahasyim.mystoryapp.databinding.ActivityMainBinding
 import com.bahasyim.mystoryapp.util.ViewUtil
@@ -19,6 +22,7 @@ import com.bahasyim.mystoryapp.view.ViewModelFactory
 import com.bahasyim.mystoryapp.view.createstory.CreateStory
 import com.bahasyim.mystoryapp.view.map.MapsActivity
 import com.bahasyim.mystoryapp.view.welcome.WelcomeActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -66,26 +70,42 @@ class MainActivity : AppCompatActivity() {
 
     private fun getSession() {
         val adapter = StoriesAdapter()
+        val loadingAdapter = LoadingStoryAdapter { adapter.retry()}
+
+        binding.rvStory.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            this.adapter = adapter.withLoadStateFooter(footer = loadingAdapter)
+        }
+
         viewModel.getSession().observe(this) { user ->
             if (!user.isLogin) {
                 navigateToWelcomeActivity()
             } else {
                 lifecycleScope.launch {
-                    viewModel.story.observe(this@MainActivity){
-                        adapter.submitData(lifecycle, it)
+                    viewModel.story.observe(this@MainActivity) { pagingData ->
+                        adapter.submitData(lifecycle, pagingData)
                     }
                 }
-                binding.rvStory.adapter = adapter
-                viewModel.story.observe(this) {
-                    adapter.submitData(lifecycle, it)
-                    showLoading(false)
+                adapter.addLoadStateListener { loadState ->
+                    val isLoading = loadState.source.refresh is LoadState.Loading
+                    showLoading(isLoading)
+
+                    val isError = loadState.source.refresh is LoadState.Error
+                    if (isError) {
+                        showErrorSnackbar("Failed to load data. Please try again.")
+                    }
                 }
             }
         }
-        binding.rvStory.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            this.adapter = adapter
-        }
+
+    }
+
+    private fun showErrorSnackbar(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_INDEFINITE)
+            .setAction("Retry") {
+                val adapter = binding.rvStory.adapter as StoriesAdapter
+                adapter.retry()
+            }.show()
     }
 
     private fun navigateToWelcomeActivity() {

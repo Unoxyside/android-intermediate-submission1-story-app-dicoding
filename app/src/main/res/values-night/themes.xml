@@ -2,7 +2,10 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.MyStoryApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondaryContainer">@color/lime</item>
+        <item name="colorPrimaryContainer">@color/lime</item>
     </style>
 
 

@@ -75,7 +75,7 @@
         android:contentDescription="@string/create_story"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-
+        app:iconTint="?attr/colorOnPrimary"
         app:srcCompat="@drawable/ic_add" />
 
 
