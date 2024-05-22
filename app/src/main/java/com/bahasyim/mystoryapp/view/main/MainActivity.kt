@@ -10,8 +10,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
-import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bahasyim.mystoryapp.R
 import com.bahasyim.mystoryapp.adapter.LoadingStoryAdapter
@@ -22,7 +20,6 @@ import com.bahasyim.mystoryapp.view.ViewModelFactory
 import com.bahasyim.mystoryapp.view.createstory.CreateStory
 import com.bahasyim.mystoryapp.view.map.MapsActivity
 import com.bahasyim.mystoryapp.view.welcome.WelcomeActivity
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -97,7 +94,6 @@ class MainActivity : AppCompatActivity() {
         })
         finish()
     }
-
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBarMain.visibility = if (isLoading) View.VISIBLE else View.GONE
