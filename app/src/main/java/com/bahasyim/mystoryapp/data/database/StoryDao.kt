@@ -1,5 +1,6 @@
 package com.bahasyim.mystoryapp.data.database
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,7 +13,7 @@ interface StoryDao {
     suspend fun insertStory(story: List<ListStoryItem>)
 
     @Query("SELECT * FROM story_item")
-    fun getAllStory(): List<ListStoryItem>
+    fun getAllStory(): PagingSource<Int, ListStoryItem>
 
     @Query("DELETE FROM story_item")
     suspend fun deleteAll()

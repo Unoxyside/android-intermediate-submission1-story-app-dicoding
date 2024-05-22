@@ -44,6 +44,7 @@ class CreateStory : AppCompatActivity() {
             insets
         }
         ViewUtil.fullScreenView(this)
+        showLoading(false)
         with(binding) {
             btnGallery.setOnClickListener { startGallery() }
             btnCamera.setOnClickListener { startCamera() }
@@ -87,14 +88,14 @@ class CreateStory : AppCompatActivity() {
     }
 
     private fun uploadContent() {
+        showLoading(true)
         currentImageUri?.let { uri ->
-            val description = binding.edAddDescription.text.toString()
-            if (description.isNotEmpty()) {
-                showLoading(true)
+            val desc = binding.edAddDescription.text.toString()
+            if (desc.isNotEmpty()) {
                 val fileImage = uriToFile(uri, this).reduceImageFile()
                 Log.d("File Image", "image: ${fileImage.path}")
 
-                val requestBody = description.toRequestBody("text/plain".toMediaType())
+                val requestBody = desc.toRequestBody("text/plain".toMediaType())
                 val requestFileImage = fileImage.asRequestBody("image/jpeg".toMediaType())
                 val multipartBody = MultipartBody.Part.createFormData("photo", fileImage.name, requestFileImage)
                 viewModel.uploadContent(multipartBody, requestBody)
@@ -106,15 +107,16 @@ class CreateStory : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.uploadStatus.observe(this) { result ->
-            showLoading(false)
-            result.onSuccess {
-                showToast(getString(R.string.upload_success))
-                backToMainActivity()
-            }.onFailure {
-                showToast(it.message ?: getString(R.string.upload_failed))
+            viewModel.uploadStatus.observe(this@CreateStory) { result ->
+                showLoading(false)
+                result.onSuccess {
+                    showToast(getString(R.string.upload_success))
+                    backToMainActivity()
+                }.onFailure {
+                    showToast(it.message ?: getString(R.string.upload_failed))
+                }
             }
-        }
+
     }
 
     private fun backToMainActivity() {

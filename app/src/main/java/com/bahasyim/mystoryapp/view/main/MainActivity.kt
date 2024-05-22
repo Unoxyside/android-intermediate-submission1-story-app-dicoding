@@ -84,28 +84,11 @@ class MainActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     viewModel.story.observe(this@MainActivity) { pagingData ->
                         adapter.submitData(lifecycle, pagingData)
-                    }
-                }
-                adapter.addLoadStateListener { loadState ->
-                    val isLoading = loadState.source.refresh is LoadState.Loading
-                    showLoading(isLoading)
-
-                    val isError = loadState.source.refresh is LoadState.Error
-                    if (isError) {
-                        showErrorSnackbar("Failed to load data. Please try again.")
+                        showLoading(false)
                     }
                 }
             }
         }
-
-    }
-
-    private fun showErrorSnackbar(message: String) {
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_INDEFINITE)
-            .setAction("Retry") {
-                val adapter = binding.rvStory.adapter as StoriesAdapter
-                adapter.retry()
-            }.show()
     }
 
     private fun navigateToWelcomeActivity() {

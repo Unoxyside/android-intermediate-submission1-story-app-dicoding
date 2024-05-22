@@ -38,8 +38,8 @@ interface ApiService {
     //Stories List Data
     @GET("stories")
     suspend fun getStories(
-        @Query("page") page: Int,
-        @Query("size") size: Int
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = 10
     ): StoryResponse
 
     //Upload Story

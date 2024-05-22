@@ -18,19 +18,18 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 private const val FILE_FORMAT = "yyyyMMdd_HHmmss"
 private const val MAX_SIZE = 1000000
-private val timeStamp: String = SimpleDateFormat(FILE_FORMAT, Locale.US).format(Date())
+private val timeStamp: String = SimpleDateFormat(FILE_FORMAT, Locale.US).format(System.currentTimeMillis())
 
 fun getImageUri(context: Context): Uri {
     var uri: Uri? = null
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, "$timeStamp.jpg")
-            put(MediaStore.MediaColumns.MIME_TYPE, "image.jpg")
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
             put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/MyCamera.jpg")
         }
         uri = context.contentResolver.insert(
