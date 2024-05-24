@@ -88,19 +88,20 @@ class CreateStory : AppCompatActivity() {
     }
 
     private fun uploadContent() {
-        showLoading(true)
         currentImageUri?.let { uri ->
             val desc = binding.edAddDescription.text.toString()
-            if (desc.isNotEmpty()) {
+            val image = binding.previewImageView
+            if (desc.isNotEmpty() && image.drawable != null) {
+                showLoading(true)
                 val fileImage = uriToFile(uri, this).reduceImageFile()
                 Log.d("File Image", "image: ${fileImage.path}")
-
                 val requestBody = desc.toRequestBody("text/plain".toMediaType())
                 val requestFileImage = fileImage.asRequestBody("image/jpeg".toMediaType())
                 val multipartBody = MultipartBody.Part.createFormData("photo", fileImage.name, requestFileImage)
                 viewModel.uploadContent(multipartBody, requestBody)
                 observeViewModel()
             } else {
+                showLoading(false)
                 showToast(getString(R.string.invalid_content))
             }
         }
