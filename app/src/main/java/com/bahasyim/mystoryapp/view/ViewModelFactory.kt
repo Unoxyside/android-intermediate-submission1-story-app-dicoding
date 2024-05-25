@@ -8,6 +8,7 @@ import com.bahasyim.mystoryapp.data.Repository
 import com.bahasyim.mystoryapp.view.createstory.CreateStoryViewModel
 import com.bahasyim.mystoryapp.view.login.LoginViewModel
 import com.bahasyim.mystoryapp.view.main.MainViewModel
+import com.bahasyim.mystoryapp.view.map.MapsViewModel
 import com.bahasyim.mystoryapp.view.signup.SignUpViewModel
 
 @Suppress("UNCHECKED_CAST")
@@ -18,6 +19,7 @@ class ViewModelFactory(private val repository: Repository) : ViewModelProvider.N
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel(repository)
             modelClass.isAssignableFrom(MainViewModel::class.java) -> MainViewModel(repository)
             modelClass.isAssignableFrom(CreateStoryViewModel::class.java) -> CreateStoryViewModel(repository)
+            modelClass.isAssignableFrom(MapsViewModel::class.java) -> MapsViewModel(repository)
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
         @Suppress("UNCHECKED_CAST")

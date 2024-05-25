@@ -45,9 +45,22 @@ interface ApiService {
     //Upload Story
     @Multipart
     @POST("stories")
-    fun uploadContent(
+    suspend fun uploadContent(
         @Part image: MultipartBody.Part,
         @Part("description") description: RequestBody,
-    ): Call<UploadStoryResponse>
+    ): UploadStoryResponse
 
+    @Multipart
+    @POST("stories")
+   suspend fun uploadContentWithLocation(
+        @Part image: MultipartBody.Part,
+        @Part("description") description: RequestBody,
+        @Part("lat") lat: Double,
+        @Part("lon") lon: Double
+    ):UploadStoryResponse
+
+    @GET("stories")
+    suspend fun getContentWithLocation(
+        @Query("location")location: Int = 1
+    ): StoryResponse
 }

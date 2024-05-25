@@ -29,5 +29,6 @@
     <string name="upload_success">Upload Successfully</string>
     <string name="upload_failed">Upload Failed</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="error_description">Required to fill the description</string>
 
 </resources>

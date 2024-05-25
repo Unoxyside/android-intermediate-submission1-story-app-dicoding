@@ -11,14 +11,14 @@
         android:id="@+id/progress_bar_story"
         android:layout_width="42dp"
         android:layout_height="42dp"
-        android:visibility="visible"
-        android:indeterminate="true"
         android:elevation="8dp"
+        android:indeterminate="true"
+        android:visibility="visible"
         app:indicatorColor="@color/lime"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView"
@@ -36,8 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/photo"
-            tools:srcCompat="@tools:sample/avatars"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -57,17 +57,17 @@
             style="@style/Widget.Material3.Button.OutlinedButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:icon="@drawable/ic_photo_camera"
             android:layout_marginEnd="12dp"
-            android:text="@string/camera" />
+            android:text="@string/camera"
+            app:icon="@drawable/ic_photo_camera" />
 
         <Button
             android:id="@+id/btn_gallery"
             style="@style/Widget.Material3.Button.OutlinedButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:icon="@drawable/ic_add_photo"
-            android:text="@string/gallery" />
+            android:text="@string/gallery"
+            app:icon="@drawable/ic_add_photo" />
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -80,7 +80,7 @@
         app:boxStrokeColor="@color/slate"
         app:errorEnabled="true"
         app:hintTextColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/materialSwitch"
+        app:layout_constraintBottom_toTopOf="@+id/switch_add_location"
         app:layout_constraintEnd_toEndOf="@+id/btn_group"
         app:layout_constraintStart_toStartOf="@+id/btn_group"
         app:layout_constraintTop_toBottomOf="@+id/btn_group">
@@ -89,7 +89,9 @@
             android:id="@+id/ed_add_description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="top" />
+            android:gravity="top"
+            tools:layout_editor_absoluteX="23dp"
+            tools:layout_editor_absoluteY="466dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,18 +109,16 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/materialSwitch"
+        android:id="@+id/switch_add_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
-        app:thumbTint="@color/white"
-        app:thumbIcon="@drawable/ic_location"
-        app:thumbIconTint="@color/black"
         android:text="Add Location"
         app:layout_constraintBottom_toTopOf="@+id/button_upload"
-        app:layout_constraintEnd_toEndOf="@+id/button_upload" />
-
-
+        app:layout_constraintEnd_toEndOf="@+id/button_upload"
+        app:thumbIcon="@drawable/ic_location"
+        app:thumbIconTint="@color/black"
+        app:thumbTint="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

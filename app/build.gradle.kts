@@ -77,4 +77,7 @@ dependencies {
     //room
     implementation("androidx.room:room-ktx:2.4.0-rc01")
     ksp("androidx.room:room-compiler:2.4.0-rc01")
+    //maps
+    implementation ("com.google.android.gms:play-services-maps:18.2.0")
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
 }
