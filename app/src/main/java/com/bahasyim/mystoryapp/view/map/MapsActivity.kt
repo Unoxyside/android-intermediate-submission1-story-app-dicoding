@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.coroutines.launch
 
 
+@Suppress("DEPRECATION")
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val viewModel by viewModels<MapsViewModel>{
@@ -75,36 +76,34 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun getLocationStory() {
         lifecycleScope.launch {
             viewModel.getContentWithLocation().observe(this@MapsActivity) { stories ->
-                if (stories != null) {
-                    when (stories) {
-                        is Output.Loading -> {
-                            Log.d(TAG, "getLocationStory: Loading")
-                        }
-
+                stories?.let {
+                    when (it) {
+                        is Output.Loading -> Log.d(TAG, "getLocationStory: Loading")
                         is Output.Success -> {
-                            stories.value.listStory.forEach { story ->
-                                val latLng = LatLng(story.lat!!, story.lon!!)
-                                mMap.addMarker(
-                                    MarkerOptions()
-                                        .position(LatLng(story.lat, story.lon))
-                                        .title("From ${story.name}")
-                                        .snippet("Description: ${story.description}")
-                                )
-                                boundsBuilder.include(latLng)
+                            it.value.listStory.forEach { story ->
+                                story.lat?.let { lat ->
+                                    story.lon?.let { lon ->
+                                        val latLng = LatLng(lat, lon)
+                                        mMap.addMarker(
+                                            MarkerOptions()
+                                                .position(latLng)
+                                                .title(story.name)
+                                                .snippet(story.description)
+                                        )
+                                        boundsBuilder.include(latLng)
+                                    }
+                                }
                             }
-                            val bounds: LatLngBounds = boundsBuilder.build()
                             mMap.animateCamera(
                                 CameraUpdateFactory.newLatLngBounds(
-                                    bounds,
+                                    boundsBuilder.build(),
                                     resources.displayMetrics.widthPixels,
                                     resources.displayMetrics.heightPixels,
                                     300
                                 )
                             )
                         }
-                        is Output.Error -> {
-                            showToast(stories.error)
-                        }
+                        is Output.Error -> showToast(it.error)
                     }
                 }
             }
@@ -112,12 +111,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ){ isGranted: Boolean ->
-            if(isGranted){
-                getMylocation()
-            }
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) getMylocation()
         }
 
     private fun setMapStyle() {

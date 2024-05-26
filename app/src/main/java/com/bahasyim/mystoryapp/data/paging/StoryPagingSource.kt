@@ -1,14 +1,13 @@
 package com.bahasyim.mystoryapp.data.paging
 
+import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.bahasyim.mystoryapp.data.api.ListStoryItem
 import com.bahasyim.mystoryapp.data.remote.ApiService
 
 class StoryPagingSource(private val apiService: ApiService): PagingSource<Int, ListStoryItem>() {
-    private companion object {
-        const val INITIAL_PAGE_INDEX = 1
-    }
+
 
     override fun getRefreshKey(state: PagingState<Int, ListStoryItem>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -28,6 +27,12 @@ class StoryPagingSource(private val apiService: ApiService): PagingSource<Int, L
             )
         } catch (exception: Exception) {
             return LoadResult.Error(exception)
+        }
+    }
+    companion object {
+        const val INITIAL_PAGE_INDEX = 1
+        fun snapshot(items: List<ListStoryItem>): PagingData<ListStoryItem> {
+            return PagingData.from(items)
         }
     }
 }

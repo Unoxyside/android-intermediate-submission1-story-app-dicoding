@@ -1,11 +1,14 @@
 package com.bahasyim.mystoryapp.view.createstory
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -30,6 +33,7 @@ import com.bahasyim.mystoryapp.view.ViewModelFactory
 import com.bahasyim.mystoryapp.view.main.MainActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -76,7 +80,12 @@ class CreateStory : AppCompatActivity() {
             buttonUpload.setOnClickListener { uploadContent() }
             switchAddLocation.setOnCheckedChangeListener{ _, isChecked ->
                 if (isChecked) {
-                    getMyLocation()
+                   if (isLocationEnabled()){
+                       getMyLocation()
+                   } else {
+                       switchAddLocation.isChecked = false
+                       showEnableLocationDialog()
+                   }
                 }
             }
         }
@@ -136,6 +145,29 @@ class CreateStory : AppCompatActivity() {
         }
     }
 
+    private fun isLocationEnabled(): Boolean {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    private fun showEnableLocationDialog() {
+        val dialogBuilder = MaterialAlertDialogBuilder(this)
+        dialogBuilder.setMessage("To add location, please enable your location")
+            .setCancelable(false)
+            .setPositiveButton("Open Settings") { dialog, _ ->
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+        val alert = dialogBuilder.create()
+        alert.setTitle("Location Services Disabled")
+        alert.show()
+    }
+
     private fun getMyLocation() {
         if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
@@ -178,25 +210,25 @@ class CreateStory : AppCompatActivity() {
                         lat,
                         lon
                     ).observe(this@CreateStory) { result ->
-                            if (result != null) {
-                                when (result) {
-                                    is Output.Loading -> {
-                                        showLoading(true)
-                                    }
+                        if (result != null) {
+                            when (result) {
+                                is Output.Loading -> {
+                                    showLoading(true)
+                                }
 
-                                    is Output.Success -> {
-                                        showLoading(false)
-                                        showToast("Story Upload Successfully")
-                                        backToMainActivity()
-                                    }
+                                is Output.Success -> {
+                                    showLoading(false)
+                                    showToast("Story Upload Successfully")
+                                    backToMainActivity()
+                                }
 
-                                    is Output.Error -> {
-                                        showLoading(false)
-                                        showToast(result.error)
-                                    }
+                                is Output.Error -> {
+                                    showLoading(false)
+                                    showToast(result.error)
                                 }
                             }
                         }
+                    }
                 }
             } catch (e: HttpException) {
                 val errorBody = e.response()?.errorBody()?.string()

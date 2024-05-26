@@ -47,8 +47,8 @@ class Repository private constructor(
 
 
     //paging
-    @OptIn(ExperimentalPagingApi::class)
     fun getStory(): LiveData<PagingData<ListStoryItem>> {
+        @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
                 pageSize = 5
@@ -86,27 +86,6 @@ class Repository private constructor(
         userPreference.saveSession(user)
     }
 
-//    fun getStories(){
-//        _isLoading.value = true
-//        val client = apiService.getStories()
-//        client.enqueue(object : Callback<StoryResponse> {
-//            override fun onResponse(
-//                call: Call<StoryResponse>,
-//                response: Response<StoryResponse>
-//            ) {
-//                if (response.isSuccessful){
-//                    _isLoading.value = false
-//                    _listStory.value = response.body()?.listStory
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
-//                _isLoading.value = false
-//                Log.e("Repository", "error: ${t.message}" )
-//            }
-//
-//        })
-//    }
 
     fun getSession(): Flow<UserModel> {
         return userPreference.getSession()
